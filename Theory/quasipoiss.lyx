@@ -1,0 +1,265 @@
+#LyX 2.3 created this file. For more info see http://www.lyx.org/
+\lyxformat 544
+\begin_document
+\begin_header
+\save_transient_properties true
+\origin unavailable
+\textclass article
+\use_default_options true
+\maintain_unincluded_children false
+\language english
+\language_package default
+\inputencoding auto
+\fontencoding global
+\font_roman "default" "default"
+\font_sans "default" "default"
+\font_typewriter "default" "default"
+\font_math "auto" "auto"
+\font_default_family default
+\use_non_tex_fonts false
+\font_sc false
+\font_osf false
+\font_sf_scale 100 100
+\font_tt_scale 100 100
+\use_microtype false
+\use_dash_ligatures true
+\graphics default
+\default_output_format default
+\output_sync 0
+\bibtex_command default
+\index_command default
+\paperfontsize default
+\spacing single
+\use_hyperref false
+\papersize default
+\use_geometry false
+\use_package amsmath 1
+\use_package amssymb 1
+\use_package cancel 1
+\use_package esint 1
+\use_package mathdots 1
+\use_package mathtools 1
+\use_package mhchem 1
+\use_package stackrel 1
+\use_package stmaryrd 1
+\use_package undertilde 1
+\cite_engine basic
+\cite_engine_type default
+\biblio_style plain
+\use_bibtopic false
+\use_indices false
+\paperorientation portrait
+\suppress_date false
+\justification true
+\use_refstyle 1
+\use_minted 0
+\index Index
+\shortcut idx
+\color #008000
+\end_index
+\secnumdepth 3
+\tocdepth 3
+\paragraph_separation indent
+\paragraph_indentation 0bp
+\is_math_indent 0
+\math_numbering_side default
+\quotes_style english
+\dynamic_quotes 0
+\papercolumns 1
+\papersides 1
+\paperpagestyle default
+\tracking_changes false
+\output_changes false
+\html_math_output 0
+\html_css_as_file 0
+\html_be_strict false
+\end_header
+
+\begin_body
+
+\begin_layout Standard
+Let 
+\begin_inset Formula $X|Y\sim Pois\left(y\right)$
+\end_inset
+
+ and 
+\begin_inset Formula $Y\sim\Gamma\left(r,\lambda\right)$
+\end_inset
+
+.
+ Denote 
+\begin_inset Formula $\lambda=\frac{1-p}{p}\iff p=\frac{1}{\lambda+1}$
+\end_inset
+
+ then:
+\end_layout
+
+\begin_layout Standard
+\begin_inset Formula 
+\[
+E\left[X\right]=E\left[E\left[X|Y\right]\right]=E\left[Y\right]=\frac{r}{\lambda}=r\frac{p}{1-p}
+\]
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+\begin_inset Formula 
+\begin{align*}
+Var\left(X\right) & =E\left[Var\left(X|Y\right)\right]+Var\left(E\left[X|Y\right]\right)\\
+ & =E\left[Y\right]+Var\left(Y\right)\\
+ & =\frac{r}{\lambda}+\frac{r}{\lambda^{2}}=\frac{r}{\lambda}\left(1+\frac{1}{\lambda}\right)\\
+ & =\frac{r}{\lambda}\left(\frac{\lambda+1}{\lambda}\right)\\
+ & =\frac{r}{\frac{1-p}{p}}\left(\frac{\frac{1-p}{p}+1}{\frac{1-p}{p}}\right)\\
+ & =r\frac{p}{1-p}\left(\frac{\frac{1}{p}}{\frac{1-p}{p}}\right)\\
+ & =r\frac{p}{1-p}\left(\frac{1}{1-p}\right)=r\frac{p}{\left(1-p\right)^{2}}
+\end{align*}
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+\begin_inset Formula 
+\begin{align*}
+f\left(X=x,Y=y\right) & =f\left(X=x|Y=y\right)f\left(Y=y\right)\\
+ & =\frac{e^{-y}y^{x}}{x!}\cdot\frac{\lambda^{r}y^{r-1}e^{-\lambda y}}{\Gamma\left(r\right)}\\
+ & =\frac{\lambda^{r}}{x!\cdot\Gamma\left(r\right)}y^{x+r-1}e^{-\left(\lambda+1\right)y}\\
+ & =\frac{\lambda^{r}}{x!\cdot\Gamma\left(r\right)}\frac{\Gamma\left(x+r\right)}{\left(\lambda+1\right)^{x+r}}\frac{\left(\lambda+1\right)^{x+r}y^{x+r-1}e^{-\left(\lambda+1\right)y}}{\Gamma\left(x+r\right)}
+\end{align*}
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+And we get that 
+\begin_inset Formula $Y|X\sim\Gamma\left(x+r,\lambda+1\right)\iff Y|X\sim\Gamma\left(x+r,\frac{1}{p}\right)$
+\end_inset
+
+.
+ The distribution of 
+\begin_inset Formula $X$
+\end_inset
+
+ is
+\end_layout
+
+\begin_layout Standard
+\begin_inset Formula 
+\begin{align*}
+f\left(X=x\right) & =\frac{\lambda^{r}}{x!\cdot\Gamma\left(r\right)}\frac{\Gamma\left(x+r\right)}{\left(\lambda+1\right)^{x+r}}\\
+ & =\frac{\Gamma\left(x+r\right)}{x!\cdot\Gamma\left(r\right)}\frac{\lambda^{r}}{\left(\lambda+1\right)^{x+r}}
+\end{align*}
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+\begin_inset Formula 
+\begin{align*}
+f\left(X=x\right) & =\frac{\Gamma\left(x+r\right)}{x!\cdot\Gamma\left(r\right)}\frac{\lambda^{r}}{\left(\lambda+1\right)^{x+r}}\\
+ & =\frac{\Gamma\left(x+r\right)}{x!\cdot\Gamma\left(r\right)}\frac{\left(\frac{1-p}{p}\right)^{r}}{\left(\frac{1-p}{p}+1\right)^{x+r}}\\
+ & =\frac{\Gamma\left(x+r\right)}{x!\cdot\Gamma\left(r\right)}\frac{\left(\frac{1-p}{p}\right)^{r}}{\left(\frac{1}{p}\right)^{x+r}}\\
+ & =\frac{\Gamma\left(x+r\right)}{x!\cdot\Gamma\left(r\right)}\left(1-p\right)^{r}p^{-r}p^{x+r}\\
+ & =\frac{\Gamma\left(x+r\right)}{x!\cdot\Gamma\left(r\right)}p^{x}\left(1-p\right)^{r}
+\end{align*}
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+And 
+\begin_inset Formula $X\sim NB\left(r,p\right)\iff X\sim NB\left(r,\frac{1}{\lambda+1}\right)$
+\end_inset
+
+ with 
+\begin_inset Formula 
+\[
+E\left[X\right]=r\frac{p}{1-p}=\frac{r}{\lambda}
+\]
+
+\end_inset
+
+
+\begin_inset Formula 
+\[
+Var\left(X\right)=r\frac{p}{\left(1-p\right)^{2}}=r\frac{\lambda+1}{\lambda^{2}}=E\left[X\right]\cdot\frac{\lambda+1}{\lambda}
+\]
+
+\end_inset
+
+ 
+\end_layout
+
+\begin_layout Standard
+The quasi-poisson distribution holds 
+\begin_inset Formula $E\left[X\right]=\mu$
+\end_inset
+
+ and 
+\begin_inset Formula $Var\left(X\right)=\theta\mu$
+\end_inset
+
+.
+ So we need to parameterise:
+\end_layout
+
+\begin_layout Standard
+\begin_inset Formula 
+\begin{align*}
+\mu & =\frac{r}{\lambda}\\
+\theta\mu & =\mu\cdot\frac{\lambda+1}{\lambda}\\
+\theta & =\frac{\lambda+1}{\lambda}
+\end{align*}
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+\begin_inset Formula 
+\begin{align*}
+\theta & =1+\frac{1}{\lambda}\\
+\lambda & =\frac{1}{\theta-1}\\
+\mu & =\frac{r}{\lambda}=r\left(\theta-1\right)\\
+r & =\frac{\mu}{\theta-1}\\
+p & =\frac{1}{\lambda+1}=\frac{\theta-1}{\theta}*****=\frac{1}{\theta}\\
+1-p & =1-\frac{1}{\lambda+1}=1-\frac{\theta-1}{\theta}=1-1+\frac{1}{\theta}=\frac{1}{\theta}
+\end{align*}
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+\begin_inset Formula 
+\[
+\frac{1-p}{p}=\lambda=\frac{1}{\theta-1}
+\]
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+So we can generate 
+\begin_inset Formula $X\sim NB\left(\frac{\mu}{\theta-1},\frac{1}{\theta}\right)$
+\end_inset
+
+
+\end_layout
+
+\end_body
+\end_document

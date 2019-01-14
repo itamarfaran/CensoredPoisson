@@ -1,0 +1,494 @@
+#LyX 2.3 created this file. For more info see http://www.lyx.org/
+\lyxformat 544
+\begin_document
+\begin_header
+\save_transient_properties true
+\origin unavailable
+\textclass article
+\use_default_options true
+\maintain_unincluded_children false
+\language english
+\language_package default
+\inputencoding auto
+\fontencoding global
+\font_roman "default" "default"
+\font_sans "default" "default"
+\font_typewriter "default" "default"
+\font_math "auto" "auto"
+\font_default_family default
+\use_non_tex_fonts false
+\font_sc false
+\font_osf false
+\font_sf_scale 100 100
+\font_tt_scale 100 100
+\use_microtype false
+\use_dash_ligatures true
+\graphics default
+\default_output_format default
+\output_sync 0
+\bibtex_command default
+\index_command default
+\paperfontsize default
+\spacing single
+\use_hyperref false
+\papersize default
+\use_geometry true
+\use_package amsmath 1
+\use_package amssymb 1
+\use_package cancel 1
+\use_package esint 1
+\use_package mathdots 1
+\use_package mathtools 1
+\use_package mhchem 1
+\use_package stackrel 1
+\use_package stmaryrd 1
+\use_package undertilde 1
+\cite_engine basic
+\cite_engine_type default
+\biblio_style plain
+\use_bibtopic false
+\use_indices false
+\paperorientation portrait
+\suppress_date false
+\justification true
+\use_refstyle 1
+\use_minted 0
+\index Index
+\shortcut idx
+\color #008000
+\end_index
+\leftmargin 2cm
+\topmargin 2cm
+\rightmargin 2cm
+\bottommargin 2cm
+\secnumdepth 3
+\tocdepth 3
+\paragraph_separation indent
+\paragraph_indentation 0cm
+\is_math_indent 0
+\math_numbering_side default
+\quotes_style english
+\dynamic_quotes 0
+\papercolumns 1
+\papersides 1
+\paperpagestyle default
+\tracking_changes false
+\output_changes false
+\html_math_output 0
+\html_css_as_file 0
+\html_be_strict false
+\end_header
+
+\begin_body
+
+\begin_layout Title
+Censored Possion GLM
+\end_layout
+
+\begin_layout Author
+Itamar Faran @ HUJI
+\end_layout
+
+\begin_layout Section
+Model Definition
+\end_layout
+
+\begin_layout Standard
+The Poisson distribution follows the PMF of 
+\begin_inset Formula $P\left(Y=y\right)=\frac{e^{\lambda}\lambda^{y}}{y!}$
+\end_inset
+
+.
+ In order to deal with over-dispersion, an 
+\begin_inset Formula $\alpha$
+\end_inset
+
+ paramater is added to the model: 
+\begin_inset Formula 
+\begin{align*}
+P\left(Y=y\right) & =\frac{1}{y!}\left(\frac{\lambda}{1+\alpha\lambda}\right)^{y}\left(1+\alpha y\right)^{y-1}\exp\left[-\lambda\cdot\frac{1+\alpha y}{1+\alpha\lambda}\right]\\
+ & =\frac{1}{y!\cdot\left(1+\alpha y\right)}\left(\lambda\cdot\frac{1+\alpha y}{1+\alpha\lambda}\right)^{y}\exp\left[-\lambda\cdot\frac{1+\alpha y}{1+\alpha\lambda}\right]
+\end{align*}
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+\begin_inset Formula 
+\begin{align*}
+y! & \approx\sqrt{2\pi y}\left(\frac{y}{e}\right)^{y}\\
+\ln y! & \approx\ln\sqrt{2\pi y}+y\ln y-y
+\end{align*}
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+With 
+\begin_inset Formula $E\left[Y\right]=\lambda$
+\end_inset
+
+ and 
+\begin_inset Formula $Var\left(Y\right)=\lambda\left(1+\alpha\lambda\right)^{2}$
+\end_inset
+
+.
+ Note that with 
+\begin_inset Formula $\alpha\coloneqq0$
+\end_inset
+
+ this falls to a standard Poisson distribution.
+ We have 
+\end_layout
+
+\begin_layout Standard
+\begin_inset Formula 
+\begin{align*}
+P\left(Y_{i}=y\right) & =\frac{1}{y!}\left(\frac{\lambda_{i}}{1+\alpha\lambda_{i}}\right)^{y}\left(1+\alpha y\right)^{y-1}\exp\left[-\lambda_{i}\cdot\frac{1+\alpha y}{1+\alpha\lambda_{i}}\right]\\
+\ln P\left(Y_{i}=y\right) & =-\ln y!+y\ln\left(\frac{\lambda_{i}}{1+\alpha\lambda_{i}}\right)+\left(y-1\right)\ln\left(1+\alpha y\right)-\lambda_{i}\cdot\frac{1+\alpha y}{1+\alpha\lambda_{i}}\\
+\frac{\partial}{\partial\alpha}\ln P\left(Y_{i}=y\right) & =\frac{\left(y-1\right)\cdot y}{1+\alpha y}-2\cdot\frac{y\cdot\lambda_{i}}{1+\alpha\lambda_{i}}+\left(1+\alpha y\right)\cdot\left(\frac{\lambda_{i}}{1+\alpha\lambda_{i}}\right)^{2}\\
+ & =-\frac{y\cdot\lambda_{i}}{1+\alpha\lambda_{i}}+\frac{\left(y-1\right)\cdot y}{1+\alpha y}-\frac{\lambda_{i}\cdot\left(y-\lambda_{i}\right)}{\left(1+\alpha\lambda_{i}\right)^{2}}\\
+\frac{\partial}{\partial\lambda_{i}}\ln P\left(Y_{i}=y\right) & =\frac{y-\lambda_{i}}{\left(1+\alpha\lambda_{i}\right)^{2}\lambda_{i}}\\
+\frac{\partial^{2}}{\partial\alpha^{2}}\ln P\left(Y_{i}=y\right) & =-\frac{\left(y-1\right)\cdot y^{2}}{\left(1+\alpha y\right)^{2}}+3\cdot\frac{\lambda_{i}^{2}\cdot y}{\left(1+\alpha\lambda_{i}\right)^{2}}-2\frac{\lambda_{i}^{3}\cdot\left(1+\alpha y\right)}{\left(1+\alpha\lambda_{i}\right)^{3}}\\
+\frac{\partial^{2}}{\partial\lambda_{i}^{2}}\ln P\left(Y_{i}=y\right) & =y\left(-\frac{1}{\lambda_{i}^{2}}+\frac{\alpha^{2}}{\left(1+\alpha\lambda_{i}\right)^{2}}\right)-2\alpha\frac{1+\alpha y}{\left(1+\alpha\lambda_{i}\right)^{2}}\left(1-\frac{\lambda_{i}\alpha}{1+\alpha\lambda_{i}}\right)\\
+\frac{\partial^{2}}{\partial\alpha\partial\lambda_{i}}\ln P\left(Y_{i}=y\right) & =2\cdot\frac{\lambda_{i}-y}{\left(1+\alpha\lambda_{i}\right)^{3}}
+\end{align*}
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+\begin_inset Newpage newpage
+\end_inset
+
+Without censorship, our likelihood is defined by 
+\begin_inset Formula 
+\begin{align*}
+\mathcal{L}\left(Y=y|X,\alpha,\beta\right) & =\prod_{i=1}^{n}P\left(Y_{i}=y_{i}\right)\\
+\ell\left(Y=y|X,\alpha,\beta\right) & =\sum_{i=1}^{n}\ln P\left(Y_{i}=y_{i}\right)\\
+\frac{\partial\ell}{\partial v} & =\sum_{i=1}^{n}\frac{\partial}{\partial v}\ln P\left(Y_{i}=y_{i}\right)
+\end{align*}
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Section
+Censorship
+\end_layout
+
+\begin_layout Standard
+In order to introduce censorship, we need to find the derivatives of 
+\begin_inset Formula $P\left(Y_{i}>y\right)$
+\end_inset
+
+:
+\end_layout
+
+\begin_layout Standard
+\begin_inset Formula 
+\begin{align*}
+P\left(Y_{i}>y\right) & =1-P\left(Y_{i}\leq y\right)\\
+ & =1-\sum_{z=0}^{y}P\left(Y_{i}=z\right)\\
+\ln P\left(Y_{i}>y\right) & =\ln\left(1-\sum_{z=0}^{y}P\left(Y_{i}=z\right)\right)\\
+\frac{\partial}{\partial v}\ln P\left(Y_{i}>y\right) & =\frac{\partial}{\partial v}\ln\left(1-\sum_{z=0}^{y}P\left(Y_{i}=z\right)\right)\\
+ & =\frac{-\frac{\partial}{\partial v}\sum_{z=0}^{y}P\left(Y_{i}=z\right)}{1-\sum_{z=0}^{y}P\left(Y_{i}=z\right)}\\
+ & =\frac{-\sum_{z=0}^{y}\frac{\partial}{\partial v}P\left(Y_{i}=z\right)}{P\left(Y_{i}>y\right)}
+\end{align*}
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+\begin_inset Formula 
+\begin{align*}
+\frac{\partial^{2}}{\partial v\partial u}\ln P\left(Y_{i}>y\right) & =\frac{\partial}{\partial u}\frac{-\sum_{z=0}^{y}\frac{\partial}{\partial v}P\left(Y_{i}=z\right)}{1-\sum_{z=0}^{y}P\left(Y_{i}=z\right)}\\
+ & =-\frac{\sum_{z=0}^{y}\frac{\partial^{2}}{\partial v\partial u}P\left(Y_{i}=z\right)\left(1-\sum_{z=0}^{y}P\left(Y_{i}=z\right)\right)+\sum_{z=0}^{y}\frac{\partial}{\partial v}P\left(Y_{i}=z\right)\cdot\sum_{z=0}^{y}\frac{\partial}{\partial u}P\left(Y_{i}=z\right)}{\left(1-\sum_{z=0}^{y}P\left(Y_{i}=z\right)\right)}\\
+ & =-\frac{\sum_{z=0}^{y}\frac{\partial^{2}}{\partial v\partial u}P\left(Y_{i}=z\right)P\left(Y_{i}>y\right)+\sum_{z=0}^{y}\frac{\partial}{\partial v}P\left(Y_{i}=z\right)\cdot\sum_{z=0}^{y}\frac{\partial}{\partial u}P\left(Y_{i}=z\right)}{P\left(Y_{i}>y\right)}
+\end{align*}
+
+\end_inset
+
+
+\begin_inset Newpage newpage
+\end_inset
+
+
+\end_layout
+
+\begin_layout Section
+Likelihood and Link Functions
+\end_layout
+
+\begin_layout Standard
+Our likelihood is:
+\end_layout
+
+\begin_layout Standard
+\begin_inset Formula 
+\begin{align*}
+\mathcal{L}\left(Y=y|X,\alpha,\beta\right) & =\prod_{i=1}^{n}P\left(Y_{i}=y_{i}\right)^{\delta_{i}}\cdot P\left(Y_{i}>y_{i}\right)^{1-\delta_{i}}\\
+\ell\left(Y=y|X,\alpha,\beta\right) & =\sum_{i=1}^{n}\ln\left(P\left(Y_{i}=y_{i}\right)^{\delta_{i}}\cdot P\left(Y_{i}>y_{i}\right)^{1-\delta_{i}}\right)\\
+ & =\sum_{i=1}^{n}\delta_{i}\ln P\left(Y_{i}=y_{i}\right)+\sum_{i=1}^{n}\left(1-\delta_{i}\right)\ln P\left(Y_{i}>y_{i}\right)\\
+\frac{\partial\ell}{\partial v} & =\sum_{i=1}^{n}\delta_{i}\frac{\partial}{\partial v}\ln P\left(Y_{i}=y_{i}\right)+\sum_{i=1}^{n}\left(1-\delta_{i}\right)\frac{\partial}{\partial v}\ln P\left(Y_{i}>y_{i}\right)\\
+ & =\sum_{i=1}^{n}\delta_{i}\frac{\partial}{\partial v}\ln P\left(Y_{i}=y_{i}\right)-\sum_{i=1}^{n}\left(1-\delta_{i}\right)\frac{\sum_{z=0}^{y_{i}}\frac{\partial}{\partial v}P\left(Y_{i}=z\right)}{P\left(Y_{i}>y_{i}\right)}\\
+\frac{\partial\ell^{2}}{\partial v\partial u} & =\sum_{i=1}^{n}\delta_{i}\frac{\partial\ell^{2}}{\partial v\partial u}\ln P\left(Y_{i}=y_{i}\right)+\sum_{i=1}^{n}\left(1-\delta_{i}\right)\frac{\partial\ell^{2}}{\partial v\partial u}\ln P\left(Y_{i}>y_{i}\right)\\
+ & =\sum_{i=1}^{n}\delta_{i}\frac{\partial\ell^{2}}{\partial v\partial u}\ln P\left(Y_{i}=y_{i}\right)+\sum_{i=1}^{n}\left(1-\delta_{i}\right)\frac{\partial\ell^{2}}{\partial v\partial u}\ln P\left(Y_{i}>y_{i}\right)
+\end{align*}
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+Denote by 
+\begin_inset Formula $g$
+\end_inset
+
+ our link function: 
+\begin_inset Formula $E\left[Y_{i}\right]=\lambda_{i}=g\left(X_{i'\cdot}^{t}\beta\right)$
+\end_inset
+
+.
+ A good example is 
+\begin_inset Formula $\lambda_{i}=g\left(X_{i'\cdot}^{t}\beta\right)=e^{X_{i'\cdot}^{t}\beta}$
+\end_inset
+
+.
+ Then we have
+\end_layout
+
+\begin_layout Standard
+\begin_inset Formula 
+\[
+\frac{\partial\ell}{\partial\beta_{j}}=\frac{\partial\ell}{\partial\lambda_{i}}\frac{\partial\lambda_{i}}{\partial\beta_{j}}=\frac{\partial\ell}{\partial\lambda_{i}}\frac{\partial g_{i}}{\partial\beta_{j}}
+\]
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+\begin_inset Formula 
+\begin{align*}
+\frac{\partial g_{i}}{\partial\beta_{j}} & =\frac{\partial}{\partial\beta_{j}}e^{X_{i'\cdot}^{t}\beta}\\
+ & =e^{X_{i'\cdot}^{t}\beta}\cdot\frac{\partial}{\partial\beta_{j}}\left(\sum_{j}X_{ij\cdot}\beta_{j}\right)\\
+ & =e^{X_{i'\cdot}^{t}\beta}\cdot X_{ij\cdot}
+\end{align*}
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+\begin_inset Formula 
+\begin{align*}
+\frac{\partial\ell}{\partial\beta_{j}} & =\frac{\partial\ell}{\partial\lambda_{i}}\frac{\partial\lambda_{i}}{\partial\beta_{j}}\\
+ & =\left(\sum_{i=1}^{n}\delta_{i}\frac{\partial\ell}{\partial\lambda_{i}}\ln P\left(Y_{i}=y_{i}\right)+\sum_{i=1}^{n}\left(1-\delta_{i}\right)\frac{\partial\ell}{\partial\lambda_{i}}\ln P\left(Y_{i}>y_{i}\right)\right)\cdot\frac{\partial\lambda_{i}}{\partial\beta_{j}}\\
+ & =\left(\sum_{i=1}^{n}\delta_{i}\frac{\partial\ell}{\partial\lambda_{i}}|_{\lambda_{i}=e^{X_{i'\cdot}^{t}\beta}}\ln P\left(Y_{i}=y_{i}\right)+\sum_{i=1}^{n}\left(1-\delta_{i}\right)\frac{\partial\ell}{\partial\lambda_{i}}|_{\lambda_{i}=e^{X_{i'\cdot}^{t}\beta}}\ln P\left(Y_{i}>y_{i}\right)\right)\cdot e^{X_{i'\cdot}^{t}\beta}\cdot X_{ij\cdot}
+\end{align*}
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+\begin_inset Newpage newpage
+\end_inset
+
+
+\end_layout
+
+\begin_layout Section
+Estimation
+\end_layout
+
+\begin_layout Standard
+Suppose w.l.o.g that all observations up to index 
+\begin_inset Formula $d$
+\end_inset
+
+ are uncensored whilst the others are.
+ Furthermore, from now on we will work only on the log link function.
+ Then:
+\end_layout
+
+\begin_layout Standard
+\begin_inset Formula 
+\[
+\ell\left(Y=y|X,\alpha,\beta\right)=\ell_{uc}+\ell_{c}=\sum_{i=1}^{d}\ln P\left(Y_{i}=y_{i}\right)+\sum_{i=d+1}^{n}\ln P\left(Y_{i}>y_{i}\right)
+\]
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+\begin_inset Formula 
+\begin{align*}
+\frac{\partial\ell_{uc}}{\partial\alpha} & =\frac{\partial}{\partial\alpha}\sum_{i=1}^{d}\ln P\left(Y_{i}=y_{i}\right)\\
+ & =\sum_{i=1}^{d}\frac{\partial}{\partial\alpha}\ln P\left(Y_{i}=y_{i}\right)\\
+ & =\sum_{i=1}^{d}-\frac{y_{i}\cdot\lambda_{i}}{1+\alpha\lambda_{i}}+\frac{\left(y_{i}-1\right)\cdot y_{i}}{1+\alpha y_{i}}-\frac{\lambda_{i}\cdot\left(y_{i}-\lambda_{i}\right)}{\left(1+\alpha\lambda_{i}\right)^{2}}\\
+ & =-\sum_{i=1}^{d}\frac{y_{i}\cdot\lambda_{i}}{1+\alpha\lambda_{i}}+\sum_{i=1}^{d}\frac{\left(y_{i}-1\right)\cdot y_{i}}{1+\alpha y_{i}}-\sum_{i=1}^{d}y\frac{\lambda_{i}\cdot\left(y_{i}-\lambda_{i}\right)}{\left(1+\alpha\lambda_{i}\right)^{2}}
+\end{align*}
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+\begin_inset Formula 
+\begin{align*}
+\frac{\partial\ell_{c}}{\partial\alpha} & =\frac{\partial\ell_{c}}{\partial\alpha}\sum_{i=d+1}^{n}\ln P\left(Y_{i}>y_{i}\right)\\
+ & =\sum_{i=d+1}^{n}\frac{\partial}{\partial\alpha}\ln P\left(Y_{i}>y_{i}\right)\\
+ & =\sum_{i=d+1}^{n}\frac{-\sum_{z=0}^{y}\frac{\partial}{\partial\alpha}P\left(Y_{i}=z\right)}{1-\sum_{z=0}^{y}P\left(Y_{i}=z\right)}\\
+ & =\sum_{i=d+1}^{n}\frac{-\sum_{z=0}^{y}\frac{\partial}{\partial\alpha}P\left(Y_{i}=z\right)}{1-\sum_{z=0}^{y}P\left(Y_{i}=z\right)}
+\end{align*}
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+\begin_inset Newpage newpage
+\end_inset
+
+
+\end_layout
+
+\begin_layout Section
+Icky Calculus
+\end_layout
+
+\begin_layout Standard
+\begin_inset Formula 
+\begin{align*}
+P\left(Y_{i}=y\right) & =\frac{1}{y!}\left(\frac{\lambda_{i}}{1+\alpha\lambda_{i}}\right)^{y}\left(1+\alpha y\right)^{y-1}\exp\left[-\lambda_{i}\cdot\frac{1+\alpha y}{1+\alpha\lambda_{i}}\right]\\
+\ln P\left(Y=y\right) & =-\ln y!+y\ln\left(\frac{\lambda_{i}}{1+\alpha\lambda_{i}}\right)+\left(y-1\right)\ln\left(1+\alpha y\right)-\lambda_{i}\cdot\frac{1+\alpha y}{1+\alpha\lambda_{i}}\\
+\frac{\partial}{\partial\alpha}\ln P\left(Y=y\right) & =y\frac{\partial}{\partial\alpha}\ln\left(\frac{\lambda_{i}}{1+\alpha\lambda_{i}}\right)+\left(y-1\right)\frac{\partial}{\partial\alpha}\ln\left(1+\alpha y\right)-\lambda_{i}\cdot\frac{\partial}{\partial\alpha}\frac{1+\alpha y}{1+\alpha\lambda_{i}}\\
+ & =y\frac{\partial}{\partial\alpha}\left(\ln\lambda_{i}-\ln\left(1+\alpha\lambda_{i}\right)\right)+\left(y-1\right)\frac{\partial}{\partial\alpha}\ln\left(1+\alpha y\right)-\lambda_{i}\cdot\frac{\partial}{\partial\alpha}\frac{1+\alpha y}{1+\alpha\lambda_{i}}\\
+ & =-y\frac{\lambda_{i}}{1+\alpha\lambda_{i}}+\left(y-1\right)\frac{y}{1+\alpha y}-\lambda_{i}\cdot\frac{y\left(1+\alpha\lambda_{i}\right)-\lambda_{i}\left(1+\alpha y\right)}{\left(1+\alpha\lambda_{i}\right)^{2}}\\
+ & =-\frac{\lambda_{i}\cdot y}{1+\alpha\lambda_{i}}+\left(y-1\right)\frac{y}{1+\alpha y}-\frac{\lambda_{i}\cdot y}{1+\alpha\lambda_{i}}+\lambda_{i}^{2}\cdot\frac{1+\alpha y}{\left(1+\alpha\lambda_{i}\right)^{2}}\\
+ & =\frac{\left(y-1\right)\cdot y}{1+\alpha y}-2\cdot\frac{\lambda_{i}\cdot y}{1+\alpha\lambda_{i}}+\lambda_{i}^{2}\cdot\frac{1+\alpha y}{\left(1+\alpha\lambda_{i}\right)^{2}}\\
+ & =\frac{\left(y-1\right)\cdot y}{1+\alpha y}-2\cdot y\cdot\frac{\lambda_{i}}{1+\alpha\lambda_{i}}+\left(1+\alpha y\right)\cdot\left(\frac{\lambda_{i}}{1+\alpha\lambda_{i}}\right)^{2}\\
+ & =-\frac{y\cdot\lambda_{i}}{1+\alpha\lambda_{i}}+\frac{\left(y-1\right)\cdot y}{1+\alpha y}-\frac{y\cdot\lambda_{i}}{1+\alpha\lambda_{i}}+\left(1+\alpha y\right)\cdot\left(\frac{\lambda_{i}}{1+\alpha\lambda_{i}}\right)^{2}\\
+ & =...-\frac{\left(1+\alpha\lambda_{i}\right)y\cdot\lambda_{i}}{\left(1+\alpha\lambda_{i}\right)^{2}}+\frac{\left(1+\alpha y\right)\cdot\lambda_{i}^{2}}{\left(1+\alpha\lambda_{i}\right)^{2}}\\
+ & =...+\lambda_{i}\cdot\frac{\left(\lambda_{i}+\alpha\lambda_{i}y\right)-\left(y+\alpha y\lambda_{i}\right)}{\left(1+\alpha\lambda_{i}\right)^{2}}\\
+ & =...+\lambda_{i}\cdot\frac{\lambda_{i}-y}{\left(1+\alpha\lambda_{i}\right)^{2}}\\
+ & =-\frac{y\cdot\lambda_{i}}{1+\alpha\lambda_{i}}+\frac{\left(y-1\right)\cdot y}{1+\alpha y}-\frac{\lambda_{i}\cdot\left(y-\lambda_{i}\right)}{\left(1+\alpha\lambda_{i}\right)^{2}}
+\end{align*}
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+\begin_inset Formula 
+\begin{align*}
+\frac{\partial^{2}}{\partial\alpha^{2}}\ln P\left(Y=y\right) & =\frac{\partial}{\partial\alpha}\frac{\left(y-1\right)\cdot y}{1+\alpha y}-2\cdot\frac{\partial}{\partial\alpha}\frac{\lambda_{i}\cdot y}{1+\alpha\lambda_{i}}+\lambda_{i}^{2}\cdot\frac{\partial}{\partial\alpha}\frac{1+\alpha y}{\left(1+\alpha\lambda_{i}\right)^{2}}\\
+ & =-\frac{\left(y-1\right)\cdot y^{2}}{\left(1+\alpha y\right)^{2}}+2\cdot\frac{\lambda_{i}^{2}\cdot y}{\left(1+\alpha\lambda_{i}\right)^{2}}+\lambda_{i}^{2}\cdot\frac{y\left(1+\alpha\lambda_{i}\right)^{2}-2\left(1+\alpha y\right)\left(1+\alpha\lambda_{i}\right)\lambda_{i}}{\left(1+\alpha\lambda_{i}\right)^{4}}\\
+ & =-\frac{\left(y-1\right)\cdot y^{2}}{\left(1+\alpha y\right)^{2}}+2\cdot\frac{\lambda_{i}^{2}\cdot y}{\left(1+\alpha\lambda_{i}\right)^{2}}+\frac{\lambda_{i}^{2}\cdot y}{\left(1+\alpha\lambda_{i}\right)^{2}}-\frac{2\left(1+\alpha y\right)\lambda_{i}^{3}}{\left(1+\alpha\lambda_{i}\right)^{3}}\\
+ & =-\frac{\left(y-1\right)\cdot y^{2}}{\left(1+\alpha y\right)^{2}}+3\cdot\frac{\lambda_{i}^{2}\cdot y}{\left(1+\alpha\lambda_{i}\right)^{2}}-2\frac{\lambda_{i}^{3}\cdot\left(1+\alpha y\right)}{\left(1+\alpha\lambda_{i}\right)^{3}}
+\end{align*}
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+\begin_inset Formula 
+\[
+\frac{\partial}{\partial\lambda_{i}}\frac{\lambda_{i}}{1+\alpha\lambda_{i}}=\frac{1+\alpha\lambda_{i}-\alpha\lambda_{i}}{\left(1+\alpha\lambda_{i}\right)^{2}}=\frac{1}{\left(1+\alpha\lambda_{i}\right)^{2}}
+\]
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+\begin_inset Formula 
+\begin{align*}
+\frac{\partial^{2}}{\partial\alpha\partial\lambda_{i}}\ln P\left(Y=y\right) & =\frac{\partial}{\partial\lambda_{i}}\frac{\left(y-1\right)\cdot y}{1+\alpha y}-2\cdot y\cdot\frac{\partial}{\partial\lambda_{i}}\frac{\lambda_{i}}{1+\alpha\lambda_{i}}+\left(1+\alpha y\right)\cdot\frac{\partial}{\partial\lambda_{i}}\left(\frac{\lambda_{i}}{1+\alpha\lambda_{i}}\right)^{2}\\
+ & =-2\cdot y\cdot\frac{1}{\left(1+\alpha\lambda_{i}\right)^{2}}+\left(1+\alpha y\right)\cdot2\left(\frac{\lambda_{i}}{1+\alpha\lambda_{i}}\right)\frac{1}{\left(1+\alpha\lambda_{i}\right)^{2}}\\
+ & =\frac{2}{\left(1+\alpha\lambda_{i}\right)^{2}}\left(\lambda_{i}\cdot\frac{1+\alpha y}{1+\alpha\lambda_{i}}-y\right)\\
+ & =\frac{2}{\left(1+\alpha\lambda_{i}\right)^{2}}\left(\frac{\lambda_{i}+\alpha\lambda_{i}y-y-y\alpha\lambda_{i}}{1+\alpha\lambda_{i}}\right)\\
+ & =2\cdot\frac{\lambda_{i}-y}{\left(1+\alpha\lambda_{i}\right)^{3}}
+\end{align*}
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+\begin_inset Formula 
+\begin{align*}
+\frac{\partial}{\partial\lambda_{i}}\ln P\left(Y=y\right) & =y\frac{\partial}{\partial\lambda_{i}}\ln\left(\frac{\lambda_{i}}{1+\alpha\lambda_{i}}\right)-\frac{\partial}{\partial\lambda_{i}}\lambda_{i}\cdot\frac{1+\alpha y}{1+\alpha\lambda_{i}}\\
+ & =y\left(\frac{\partial}{\partial\lambda_{i}}\ln\lambda_{i}-\frac{\partial}{\partial\lambda_{i}}\ln\left(1+\alpha\lambda_{i}\right)\right)-\left(1+\alpha y\right)\cdot\frac{\partial}{\partial\lambda_{i}}\frac{\lambda_{i}}{1+\alpha\lambda_{i}}\\
+ & =y\left(\frac{1}{\lambda_{i}}-\frac{\alpha}{1+\alpha\lambda_{i}}\right)-\left(1+\alpha y\right)\cdot\frac{\left(1+\alpha\lambda_{i}\right)-\lambda_{i}\cdot\alpha}{\left(1+\alpha\lambda_{i}\right)^{2}}\\
+ & =y\left(\frac{1}{\lambda_{i}}-\frac{\alpha}{1+\alpha\lambda_{i}}\right)-\frac{1+\alpha y}{1+\alpha\lambda_{i}}\cdot\left(1-\frac{\alpha\lambda_{i}}{1+\alpha\lambda_{i}}\right)\\
+ & =y\left(\frac{1}{\lambda_{i}}-\frac{\alpha}{1+\alpha\lambda_{i}}\right)-\left(1+\alpha y\right)\left(\frac{1}{1+\alpha\lambda_{i}}-\alpha\frac{\lambda_{i}}{\left(1+\alpha\lambda_{i}\right)^{2}}\right)\\
+ & =\frac{y}{\lambda_{i}}-\frac{y\alpha}{1+\alpha\lambda_{i}}-\frac{1+\alpha y}{1+\alpha\lambda_{i}}+\alpha\lambda_{i}\frac{1+\alpha y}{\left(1+\alpha\lambda_{i}\right)^{2}}\\
+ & =\frac{y}{\lambda_{i}}-\frac{1+2\alpha y}{1+\alpha\lambda_{i}}+\frac{\alpha\lambda_{i}\left(1+\alpha y\right)}{\left(1+\alpha\lambda_{i}\right)^{2}}\\
+ & =\frac{y}{\lambda_{i}}+\frac{\alpha\lambda_{i}\left(1+\alpha y\right)-\left(1+\alpha\lambda_{i}\right)\left(1+2\alpha y\right)}{\left(1+\alpha\lambda_{i}\right)^{2}}\\
+ & =\frac{y}{\lambda_{i}}+\frac{\alpha\lambda_{i}+\alpha^{2}y\lambda_{i}-\left(1+2\alpha y+\alpha\lambda_{i}+2\alpha^{2}y\lambda_{i}\right)}{\left(1+\alpha\lambda_{i}\right)^{2}}\\
+ & =\frac{y}{\lambda_{i}}-\frac{1+2\alpha y+\lambda_{i}\alpha^{2}y}{\left(1+\alpha\lambda_{i}\right)^{2}}\\
+ & =\frac{\left(1+\alpha\lambda_{i}\right)^{2}y}{\left(1+\alpha\lambda_{i}\right)^{2}\lambda_{i}}-\frac{\lambda_{i}\left(1+2\alpha y+\lambda_{i}\alpha^{2}y\right)}{\lambda_{i}\left(1+\alpha\lambda_{i}\right)^{2}}\\
+ & =\frac{\left(y+2y\alpha\lambda_{i}+y\alpha^{2}\lambda_{i}^{2}\right)-\left(\lambda_{i}+2\alpha y\lambda_{i}+\alpha^{2}y\lambda_{i}^{2}\right)}{\left(1+\alpha\lambda_{i}\right)^{2}\lambda_{i}}\\
+ & =\frac{y-\lambda_{i}}{\left(1+\alpha\lambda_{i}\right)^{2}\lambda_{i}}
+\end{align*}
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+\begin_inset Formula 
+\begin{align*}
+\frac{\partial^{2}}{\partial\lambda_{i}^{2}}\ln P\left(Y=y\right) & =y\left(\frac{\partial}{\partial\lambda_{i}}\frac{1}{\lambda_{i}}-\frac{\partial}{\partial\lambda_{i}}\frac{\alpha}{1+\alpha\lambda_{i}}\right)-\left(1+\alpha y\right)\left(\frac{\partial}{\partial\lambda_{i}}\frac{1}{1+\alpha\lambda_{i}}-\alpha\frac{\partial}{\partial\lambda_{i}}\frac{\lambda_{i}}{\left(1+\alpha\lambda_{i}\right)^{2}}\right)\\
+ & =y\left(-\frac{1}{\lambda_{i}^{2}}+\frac{\alpha^{2}}{\left(1+\alpha\lambda_{i}\right)^{2}}\right)-\left(1+\alpha y\right)\left(-\frac{\alpha}{\left(1+\alpha\lambda_{i}\right)^{2}}-\alpha\frac{\left(1+\alpha\lambda_{i}\right)^{2}-2\lambda_{i}\alpha\left(1+\alpha\lambda_{i}\right)}{\left(1+\alpha\lambda_{i}\right)^{4}}\right)\\
+ & =y\left(-\frac{1}{\lambda_{i}^{2}}+\frac{\alpha^{2}}{\left(1+\alpha\lambda_{i}\right)^{2}}\right)-2\alpha\frac{1+\alpha y}{\left(1+\alpha\lambda_{i}\right)^{2}}\left(1-\frac{\lambda_{i}\alpha}{1+\alpha\lambda_{i}}\right)\\
+ & =y\left(-\frac{1}{\lambda_{i}^{2}}+\frac{\alpha^{2}}{\left(1+\alpha\lambda_{i}\right)^{2}}\right)-2\alpha\frac{1+\alpha y}{\left(1+\alpha\lambda_{i}\right)^{2}}\left(1-\frac{\lambda_{i}\alpha}{1+\alpha\lambda_{i}}\right)
+\end{align*}
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+\begin_inset Formula 
+\begin{align*}
+\frac{\partial^{2}}{\partial\lambda_{i}\partial\alpha}\ln P\left(Y=y\right) & =\frac{\partial}{\partial\alpha}\frac{y-\lambda_{i}}{\left(1+\alpha\lambda_{i}\right)^{2}\lambda_{i}}\\
+ & =\frac{y-\lambda_{i}}{\lambda_{i}}\frac{\partial}{\partial\alpha}\left(1+\alpha\lambda_{i}\right)^{-2}\\
+ & =\frac{y-\lambda_{i}}{\lambda_{i}}\left(-2\right)\left(1+\alpha\lambda_{i}\right)^{-3}\cdot\lambda_{i}\\
+ & =2\cdot\frac{\lambda_{i}-y}{\left(1+\alpha\lambda_{i}\right)^{3}}
+\end{align*}
+
+\end_inset
+
+
+\end_layout
+
+\end_body
+\end_document
