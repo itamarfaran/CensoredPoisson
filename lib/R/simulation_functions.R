@@ -1,4 +1,4 @@
-source("code/baseFunctions.R")
+source("lib/R/base_functions.R")
 
 generate.cqpois.samp <- function(n = NULL, p = NULL, X = NULL, beta = NULL,
                                  alpha = NULL, cens.prob = 0, cens.range = c(0,1)){

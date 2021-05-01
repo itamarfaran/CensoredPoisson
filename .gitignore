@@ -47,3 +47,5 @@ rsconnect/
 *.tex
 desktop.ini
 .Rproj.user
+
+.idea
